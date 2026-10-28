@@ -9,23 +9,29 @@ https://docs.djangoproject.com/en/6.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
-
+import os
 from pathlib import Path
-
+import environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = environ.environ(
+    DEBUG=(bool, False)
+)
+
+# Read the .env file located in the root directory
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%$(&18o9g1b-p2!#u-r-)ej+pwc&7qvp$w5c!7#rv(=t=-3a=j'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 MAILERS = {
     "default": {
@@ -34,13 +40,13 @@ MAILERS = {
             "host": "smtp.gmail.com",
             "port": 587,
             "use_tls": True,
-            "username": "appash.das@gmail.com",
-            "password": "elwy ltyg hlun pcux",
+            "username": env('EMAIL_HOST_USER'),
+            "password": env('EMAIL_HOST_PASSWORD'),
         },
     },
 }
 
-DEFAULT_FROM_EMAIL = "appash.das@gmail.com"
+DEFAULT_FROM_EMAIL = env('EMAIL_HOST_USER')
 # Application definition
 
 INSTALLED_APPS = [
